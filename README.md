@@ -1,9 +1,10 @@
 # MIAV
 FiveM Server Side Steam-Enforced Multi-tier Ping, White list and Ban script.
 # Installing  
-1. put in resources  
-2. add "start MIAV" to your server.cfg  
-3. enjoy.  
+1. Edit the ranks in "MIAV_config.lua"
+2. put MIAV folder in resources  
+3. add "start MIAV" to your server.cfg
+4. enjoy.  
 # Commands  
 "/wltoggle 0" - will set the whitelist to 0 ( public )  
 "/wltoggle 50" - will set the whitelist to 50 ( regulars or higher )  
