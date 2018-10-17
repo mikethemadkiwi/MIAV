@@ -14,6 +14,7 @@ defaultBanMsg = "BanHammered By MIA:V" -- the msg banned users get to see.
 -- "Regular" = 50
 ---------------------------------------------------------------------------------------------
 -- Add User's to Group Levels.
-grouplist["steam:110000104b88dd8"] = 250-- madkiwi
-grouplist["steam:1100001044c28fd"] = 100 -- Jesse
+grouplist["steam:110000104b88dd8"] = 250-- madkiwi ( owner )
+grouplist["steam:1100001044c28fd"] = 100 -- Jesse ( mod )
 ---------------------------------------------------------------------------------------------
+--------------------------------------------------

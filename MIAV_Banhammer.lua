@@ -1,3 +1,5 @@
+JustLog("MIA:V: - Loaded Server Config")
+loadALLBANS()
 -------------------------------------------------------------------------------------------------------------------
 function allbanmeplz(targetID, sourceID)
     nameal = GetPlayerName(targetID)    
@@ -44,5 +46,7 @@ function saveprodList()
     local prodfile = SaveResourceFile(GetCurrentResourceName(), "banlists/prodBanList.json", saveproddata, -1)
 end
 -------------------------------------------------------------------------------------------------------------------
-JustLog('MIA:V: Ban Functions Loaded.')
+JustLog('MIA:V: - Ban Functions Loaded.')
+JustLog('MIA:V: - Whitelist set to: '.. whiteliststate)
+JustLog("MIA:V: - PingCheck {".. pingLimit .."}ms Limit")
 -------------------------------------------------------------------------------------------------------------------

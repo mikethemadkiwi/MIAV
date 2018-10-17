@@ -11,10 +11,10 @@ resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
 server_scripts {
 	'MIAV_Common.lua',
 	'MIAV_Config.lua',
-	'MIAV_server.lua',
 	'MIAV_Banhammer.lua',
 	'MIAV_cEvents.lua',
 	'MIAV_Loop.lua',
+	'MIAV_server.lua',
 }
 
 -- Client
@@ -39,5 +39,3 @@ client_scripts {
 -- dependencies {
 -- 	'baseevents'
 -- }
---there is a way to save json files in lua, i have a file here to make it happen, i'm gonna flatfile the whole thing til we get db async setup then we'll db.
--- That is a very good idea.

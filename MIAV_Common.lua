@@ -11,8 +11,6 @@ ranklist["Moderator"] = 100
 ranklist["Regular"] = 50
 grouplist = {}
 ---------------------------------------------------------------------------------------------
-------------------------DON'T TOUCH BELOW HERE-----------------------------------------------
----------------------------------------------------------------------------------------------
 function loadALLBANS()
     local loadfile_ip = LoadResourceFile(GetCurrentResourceName(), "banlists/ipBanList.json")
     loadedIP = json.decode(loadfile_ip)

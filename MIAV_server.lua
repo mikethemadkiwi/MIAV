@@ -1,9 +1,6 @@
-loadALLBANS()
 --------------------------------------------------------------------------------------------
 AddEventHandler('playerConnecting', function(playerName, setKickReason)
     loadALLBANS()
-    --
-    -- print(source)
     local steam
     local license
     local ip
@@ -58,9 +55,7 @@ end)
 RegisterServerEvent('MIAV:KnockKnock')
 AddEventHandler('MIAV:KnockKnock', function()
     local player = source
-    -- print(player)
     Citizen.CreateThread(function()
-        --------
         local steam
         local license
         local ip
@@ -76,7 +71,6 @@ AddEventHandler('MIAV:KnockKnock', function()
             end
         end
         if not steam then
-            -- this should never really fire?!?!
             Log2File("Connect", "MIAV: [ User ".. GetPlayerName(player) .." Rejected: Lack of Steam or Game License. ]")
             DropPlayer(player, "GameLicense is not Present.")
         else
@@ -112,7 +106,6 @@ AddEventHandler('MIAV:KnockKnock', function()
                 ONLINEPLAYERLIST[player] = updated
                 Log2File("Connect",'Player loaded: '.. GetPlayerName(player) .. ' : '.. license ..'')
             end
-        -------------
         end
         return
 	end)
@@ -141,4 +134,4 @@ AddEventHandler('playerDropped', function()
     Log2File("Connect",'Player Drop: '.. GetPlayerName(source) .. ' : '.. license ..'')    
 end)
 ----------------------------------------------------------------------------
-JustLog("MIA:V !!!! THIS SCRIPT SHOULD ONLY BE RESTARTED WHEN THE SERVER IS RESTARTED")
+JustLog("MIA:V CORE LOADED: Instructing Hamsters To Run.")

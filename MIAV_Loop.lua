@@ -21,6 +21,3 @@ Citizen.CreateThread(function()
         Citizen.Wait(1000)
     end
 end)
---------------------------------------------------
-JustLog("MIA:V: PingCheck {".. pingLimit .."}ms Limit")
---------------------------------------------------
