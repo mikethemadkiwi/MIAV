@@ -9,7 +9,7 @@ config.requireDiscord = false
 config.requireWhitelist = true
 config.requireBanCheck = true
 -- whitelist
-config.WL_Level = 1 -- if users level is below this they will not connect
+config.WL_Level = 0 -- if users level is below this they will not connect
 -- Msgs
 config.kickMsg = {
     Steam = "No Steam. Restart Steam and Fivem",
