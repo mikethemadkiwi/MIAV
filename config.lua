@@ -1,17 +1,19 @@
--- CONFIG FILE.
-config = {}
-config.playerList = {}
 ---------------------------------------------------------------------------
 -- Important Options.
 ---------------------------------------------------------------------------
+config = {}
 config.acceptplayers = true
 ---------------------------------------------------------------------------
--- Steam
-config.requireSteam = false
-config.requireSteamMsg = '[MIAV2: No Steam Detected, Please Restart.]'
--- Discord
+config.requireSteam = true
 config.requireDiscord = false
-config.requireDiscordMsg = '[MIAV2: No Discord Detected, Please Restart.]'
--- Whitelist
 config.requireWhitelist = true
-config.WL_Level = 0
+config.requireBanCheck = true
+-- whitelist
+config.WL_Level = 1 -- if users level is below this they will not connect
+-- Msgs
+config.kickMsg = {
+    Steam = "No Steam. Restart Steam and Fivem",
+    Discord = "No Discord. Restart Discord and Fivem",
+    Whitelist = "Your Whitelist Level is too Low",
+    Banned = "You are Banned. Contact Admins",    
+}
