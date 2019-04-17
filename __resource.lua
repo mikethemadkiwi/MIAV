@@ -1,32 +1,32 @@
 resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
--- resource_type 'gametype' { name = 'Freeroam' }
--- -- resource_type 'map' { gameTypes = { dev = true } }
+-- resource_type 'gametype' { name = 'MIAV' }
+-- resource_type 'map' { gameTypes = { dev = true } }
 
 -- map 'devMap.lua'
 
--- description 'Fivem FreeRoam dev Info Base - Non db Required'
--- ui_page 'ui.html'
+description 'NoDB Ban and Client Mitigation Script. V2.'
+ui_page 'ui/ui.html'
 
 -- Server
 server_scripts {
-	'MIAV_Common.lua',
-	'MIAV_Config.lua',
-	'MIAV_Banhammer.lua',
-	'MIAV_cEvents.lua',
-	'MIAV_Loop.lua',
-	'MIAV_server.lua',
+	'@async/async.lua',
+	'@mysql-async/lib/MySQL.lua',
+	'config.lua',
+	'Server/svfunc.lua',
+	'Server/svmain.lua'
 }
 
 -- Client
 client_scripts {
-	'MIAV_client.lua'
+	'config.lua',
+	'Client/clfunc.lua',
+	'Client/clmain.lua'
 }
 
--- -- NUI Files
--- files {
--- 	-- 'ui.html',
--- 	-- 'pdown.ttf'
--- }
+-- NUI Files
+files {
+	'ui/ui.html',
+}
 -- 
 -- exports {
 -- 	'getSharedObject'
