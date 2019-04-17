@@ -18,14 +18,10 @@ function MIAV2WLCheck(name, license, steam, discord, ip)
             if result ~= nil then
                 for j=1, #result, 1 do 
                     print("MIAV> Name: ".. result[j].name .. " ["..result[j].identifier.."] Data Found")
-                    -- retval = result[j].wl
-                    -- config.playerList[source].wl = result[j].wl
                 end   
             else
                 MIAV2CreateUser(license, name, steam, discord, ip) 
             end
-            -- print("MIAV2> "..retval)
-            -- return retval 
         ------------------------------
         end
     )   

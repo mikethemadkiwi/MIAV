@@ -1,5 +1,5 @@
 AddEventHandler('gameEventTriggered', function (name, args)
-	print('MIAV>> GAME EVT ' .. name .. ' (' .. json.encode(args) .. ')')
+	print('MIAV GameEvt>> ' .. name .. ' (' .. json.encode(args) .. ')')
 end)
   
 -- this will trigger negotiation. if you do not perform this task, you will be removed.
