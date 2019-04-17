@@ -9,17 +9,13 @@ ui_page 'ui/ui.html'
 
 -- Server
 server_scripts {
-	'@async/async.lua',
 	'@mysql-async/lib/MySQL.lua',
 	'config.lua',
-	'Server/svfunc.lua',
 	'Server/svmain.lua'
 }
 
 -- Client
 client_scripts {
-	'config.lua',
-	'Client/clfunc.lua',
 	'Client/clmain.lua'
 }
 
@@ -27,15 +23,6 @@ client_scripts {
 files {
 	'ui/ui.html',
 }
--- 
--- exports {
--- 	'getSharedObject'
--- }
--- 
--- server_exports {
--- 	'getSharedObject'
--- }
--- 
--- dependencies {
--- 	'baseevents'
--- }
+dependencies {
+	'mysql-async'
+}

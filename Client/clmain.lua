@@ -1,12 +1,3 @@
---
-AddEventHandler('miav2:getSharedObject', function(cb)
-	cb(miav2)
-end)
-
-function getSharedObject()
-	return miav2
-end
-
 AddEventHandler('gameEventTriggered', function (name, args)
 	print('MIAV>> GAME EVT ' .. name .. ' (' .. json.encode(args) .. ')')
 end)
