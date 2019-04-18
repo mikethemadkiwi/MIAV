@@ -243,11 +243,8 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
     end
 end)
 AddEventHandler('playerDropped', function()
-    local player = source
-    Citizen.CreateThread(function()
-        updateLog('Player Drop: '.. OnlinePlayers[player].name .. ' : '.. OnlinePlayers[player].identifier)
-        OnlinePlayers[player] = nil
-    end)
+    updateLog('Player Drop: '.. OnlinePlayers[source].name .. ' : '.. OnlinePlayers[source].identifier)
+    OnlinePlayers[source] = nil
 end)
 RegisterServerEvent('MIAV:NISS')
 AddEventHandler('MIAV:NISS', function()
