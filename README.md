@@ -19,4 +19,5 @@ FiveM Server Side Steam-Enforced Multi-tier Ping, White list and Ban script.
 1. head into your database and delete the "banned" info in the miav_accounts table.
 2. script does NOT need to be restarted. it updates on the fly.
 - Thanks@!!  
-Madkiwi
+  
+Madkiwi & SinaCutie

@@ -1,21 +1,83 @@
-debugMode = false
+isready = false
+debugMode = true
+settings = {}
+OnlinePlayers = {}
 --
-AddEventHandler('onMySQLReady', function ()
-    print('MIAV2> sql: ready')
-    isready = true
-    print("MIAV2 CORE LOADED: Injecting Tiger Blood.")
-end)
+-- FUNCTIONS
 --
-AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
-    if debugMode == true then
-        setKickReason("[MIAV2: Testing Completed. Get out. ]")
+function has_value(tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
     end
-    ---
+    return false
+end
+function getSettings()
+    local setters = MySQL.Sync.fetchAll('SELECT * FROM `_miav2_settings`')
+    return setters[1]
+end
+function setSetting(setting, value)
+    local s = {
+        'acceptPlayers',
+        'requireSteam',
+        'requireDiscord',
+        'requireWhitelist',
+        'requireBanCheck',
+        'pingThreshold',
+        'WL_Level'
+    }
+    if has_value(s, setting) then
+        return MySQL.Sync.execute('UPDATE `_miav2_settings` SET @setting = @value', {
+            ['@setting'] = setting,
+            ['@value'] = value
+        })
+    end
+    settings = getSettings()
+end
+function createUser(identifier, name, steam, discord, ip)
+    MySQL.Sync.execute(
+        'INSERT INTO `_miav2` (identifier, name, steam, discord, ip) VALUES (@identifier, @name, @steam, @discord, @ip)', {
+            ['@identifier'] = identifier,
+            ['@name']       = name,
+            ['@steam']      = steam,
+            ['@discord']    = discord,
+            ['@ip']         = ip
+        },
+        function(rowsaffected)
+            updateLog(rowsaffected.." User Created: ".. name .." ["..identifier.."]") 
+        end)
+end
+function updateIdentifiers(identifier, name, steam, discord, ip)
+    MySQL.Async.execute("UPDATE `_miav2` SET name=@name, steam=@steam, discord=@discord, ip=@ip WHERE identifier=@identifier", {
+        ['@identifier'] = identifier,
+        ['@name'] = name,
+        ['@steam'] = steam,
+        ['@discord'] = discord,
+        ['@ip'] = ip
+    })
+end
+function getUser(license)
+    local users = MySQL.Sync.fetchAll('SELECT * FROM `_miav2` WHERE `identifier` = @identifier', {
+        ['@identifier'] = license,
+    })
+    return users[1]
+end
+function checkPing()
+    for k,player in #OnlinePlayers do
+        currentPing = GetPlayerPing(k)
+        if currentPing > settings.pingThreshold then
+            kickPlayer(k, settings.kickMsgPing)            
+        end
+    end
+end
+function checkPlayer(player)
     local steam = nil
     local license = nil
     local ip = nil
     local discord = nil
-    for k,v in ipairs(GetPlayerIdentifiers(source))do
+    local name = GetPlayerName(player)
+    for k,v in ipairs(GetPlayerIdentifiers(player))do
         if string.sub(v, 1, string.len("steam:")) == "steam:" then
             steam = v
         end
@@ -29,72 +91,168 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
             discord = v
         end
     end
-    --- Steam Check
-    if config.requireSteam == true then
+    if settings.requireSteam == true then
         if not steam then
-            print('MIAV2> User will be Rejected: '..name..' : no steam detected.')
-            setKickReason("[MIAV2: "..config.kickMsg.Steam.." ]")
-            CancelEvent()
+            return settings.kickMsgSteam
         end
     end
-    -- Discord Check
-    if config.requireDiscord == true then
+    if settings.requireDiscord == true then
         if not discord then
-            print('MIAV2> User will be Rejected: '..name..' : no discord detected.')
-            setKickReason("[MIAV2: "..config.kickMsg.Discord.." ]")
-            CancelEvent()
+            return settings.kickMsgDiscord
         end
     end
-    --- SHOULD SERVER ACCEPT PLAYERS
-    if config.acceptplayers == false then
-        setKickReason("[MIAV2: Connection Refused]")
-        CancelEvent()
+    local SecCheck = getUser(license)
+    if SecCheck == nil then
+        createUser(license, name, steam, discord, ip)
+        SecCheck = getUser(license)
+    else
+        updateIdentifiers(license, name, steam, discord, ip)        
     end
-    -- if server sql connection is ready
+    if settings.requireWhitelist == true then
+        if (tonumber(SecCheck.wl) < tonumber(settings.WL_Level)) then
+            return settings.kickMsgWhitelist
+        end
+    end
+    if settings.requireBanCheck == true then
+        if SecCheck.banned ~= nil then
+            return settings.kickMsgBanned
+        end
+    end
+    OnlinePlayers[player] = SecCheck
+    return true
+end
+function kickPlayer(player, reason)
+    DropPlayer(player, reason)
+end
+function updateLog(text)
+    text = '[MIAV2]: '..text
+    print(text)
+    return MySQL.Async.execute('INSERT INTO `_miav2_log` (`logmsg`) VALUES (@text)', {
+        ['@text'] = text
+    })
+end
+function setBan(identifier, banBy, banReason)
+    return MySQL.Async.execute('UPDATE `_miav2` SET `banned` = 1, `banBy` = @banBy, `banReason` = @banReason where `identifier` = @identifier', {
+        ['@identifier'] = identifier,
+        ['@banBy'] = banBy,
+        ['@banReason'] = banReason
+    })
+end
+function wlUpdate(identifier, state)
+    return MySQL.Async.execute('UPDATE `_miav2` set `wl` = @wl where `identifier` = @identifier', {
+        ['@identifier'] = identifier,
+        ['@wl'] = state
+    })
+end
+function stringsplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t={} ; i=1
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        t[i] = str
+        i = i + 1
+    end
+    return t
+end
+--
+-- EVENT HANDLERS
+--
+AddEventHandler('onMySQLReady', function ()
+    settings = getSettings()
+    if settings ~= nil then
+        isready = true
+    end
+    updateLog("CORE LOADED")
+end)
+--
+-- AddEventHandler('chatMessage', function(source, name, msg) 
+--     sm = stringsplit(chatmsg, " ") 
+--     if OnlinePlayers[source].wl ~= nil then
+--         if OnlinePlayers[source].wl >= settings.modLevel then
+--             ----------- Mod or ADmin Commands
+
+--             -- whitelist toggle
+--             if sm[1] == "/wltoggle" then
+--                 CancelEvent()
+--                 if sm[2] ~= nil then
+--                     local newwlstate = tonumber(sm[2])
+--                     if newwlstate > OnlinePlayers[source].wl then newwlstate = OnlinePlayers[source].wl end
+--                     if newwlstate < 0 then newwlstate = 0 end
+--                     updateLog("Whitelist Lvl Updated to: ".. newwlstate .. " by ".. OnlinePlayers[source].name)
+--                     wlUpdate(OnlinePlayers[source].identifier, newwlstate)
+--                 end
+--             end 
+--             -- ban command
+--             if sm[1] == "/banall" then
+--                 CancelEvent()
+--                 if sm[2] ~= nil then                    
+--                     target = tonumber(sm[2])
+--                     if OnlinePlayers[target].wl < OnlinePlayers[source].wl then
+--                         -- update ban in db.
+--                         setBan(OnlinePlayers[target].identifier, OnlinePlayers[source].name, settings.kickMsBanned)
+--                         kickPlayer(target, source)
+--                     else
+--                         updateLog("Ban aborted, ".. OnlinePlayers[target].steam .." is >= "..OnlinePlayers[source].steam)
+--                     end
+--                 end
+--             end
+--             -- miav2 settings toggle
+--             if sm[1] == "/miav2set" then
+--                 CancelEvent()
+--                 local key
+--                 local value
+--                 if sm[2] ~= nil then                    
+--                     key = tonumber(sm[2])
+--                     if sm[3] ~= nil then                    
+--                         value = tonumber(sm[3])
+--                        --change setting
+--                         setSetting(key, value)
+--                        ---
+--                     end
+--                 end
+--             end                  
+--         end
+--     end
+-- end)
+--
+AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)  
+    if debugMode == true then
+        setKickReason("[MIAV2: Testing Completed. Get out.]")
+    end
     if isready == false then
         setKickReason("[MIAV2: SQL Connection NOT Ready]")
         CancelEvent()
     end
-    -- send database request
-    local SecCheck = MySQL.Sync.fetchAll('SELECT * FROM `miav2_accounts` WHERE `identifier` = @identifier', {
-        ['@identifier'] = license,
-    })
-    if SecCheck[1] == nil then
-        MySQL.Async.execute(
-            'INSERT INTO `miav2_accounts` (identifier, name, steam, discord, ip) VALUES (@identifier, @name, @steam, @discord, @ip)',
-            {
-            ['@identifier'] = license,
-            ['@name']       = name,
-            ['@steam']       = steam,
-            ['@discord']       = discord,
-            ['@ip']       = ip
-            },
-            function(rowsaffected)
-                print("MIAV2> "..rowsaffected.." User Created: ".. name .." ["..license.."]") 
-            end
-        )
+    settings = getSettings()
+    if settings.acceptPlayers == false then
+        setKickReason("[MIAV2: Connection Refused]")
+        CancelEvent()
     else
-        --UPDATE `miav2_accounts` SET `ip` = 'ip:127.0.0.1' WHERE `miav2_accounts`.`id` = 1
-        print("MIAV2> 1 User Found: ".. name .." ["..license.."]") 
-        -- whitelist check
-        if config.requireWhitelist == true then
-            if (tonumber(SecCheck[1].wl) < tonumber(config.WL_Level)) then
-                print("MIAV2> ".. name .." WL Too Low]")
-                setKickReason("[MIAV2: "..config.kickMsg.Whitelist.."]")
-                CancelEvent()
-            end
-        end
-        -- ban check
-        if config.requireBanCheck == true then
-            if SecCheck[1].banned ~= nil then
-                print("MIAV2> ".. name .." is Banned]")
-                setKickReason("[MIAV2: "..config.kickMsg.Banned.."]")
-                CancelEvent()
-            end
+        playercheck = checkPlayer(source)
+        if playercheck ~= true then
+            updateLog(name .. ": ".. playercheck)
+            setKickReason("[MIAV2]: ".. playercheck)
+            CancelEvent()
+        else
+            updateLog("User Online: ".. OnlinePlayers[source].name.." ["..OnlinePlayers[source].identifier.."]") 
         end
     end
-    ---
     if debugMode == true then
         CancelEvent()
     end
+end)
+AddEventHandler('playerDropped', function()
+    local player = source
+    Citizen.CreateThread(function()
+        updateLog('Player Drop: '.. OnlinePlayers[player].name .. ' : '.. OnlinePlayers[player].identifier)
+        OnlinePlayers[player] = nil
+    end)
+end)
+RegisterServerEvent('MIAV:NISS')
+AddEventHandler('MIAV:NISS', function()
+    local player = source
+    Citizen.CreateThread(function()
+        
+    end)
 end)

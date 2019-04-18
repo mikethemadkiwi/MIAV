@@ -3,8 +3,8 @@ description 'Ban and Client Mitigation Script. V2.'
 ui_page 'ui/ui.html'
 -- Server
 server_scripts {
+	'@async/async.lua',
 	'@mysql-async/lib/MySQL.lua',
-	'config.lua',
 	'Server/svmain.lua'
 }
 -- Client
@@ -15,7 +15,15 @@ client_scripts {
 files {
 	'ui/ui.html',
 }
+
+exports {
+	'getSharedObject'
+}
+server_exports {
+	'getSharedObject'
+}
 -- Dependancies
 dependencies {
+	'async',
 	'mysql-async'
 }
