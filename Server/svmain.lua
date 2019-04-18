@@ -1,5 +1,5 @@
 isready = false
-debugMode = true
+debugMode = false
 settings = {}
 OnlinePlayers = {}
 --
