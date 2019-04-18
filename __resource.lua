@@ -5,7 +5,8 @@ ui_page 'ui/ui.html'
 server_scripts {
 	'@async/async.lua',
 	'@mysql-async/lib/MySQL.lua',
-	'Server/svmain.lua'
+	'Server/svmain.lua',
+	'Server/svevents.lua'
 }
 -- Client
 client_scripts {
