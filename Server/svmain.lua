@@ -15,6 +15,8 @@ function has_value(tab, val)
 end
 function getSettings()
     local setters = MySQL.Sync.fetchAll('SELECT * FROM `_miav2_settings`')
+    local setMenu = '| Whitelist Required: '..tostring(setters[1].WL_Level)..' | RequireSteam: '..tostring(setters[1].requireSteam)..' | RequireDiscord: '..tostring(setters[1].requireDiscord)..' |'
+    ExecuteCommand(('sets MIAV2 "%s"'):format(setMenu))
     return setters[1]
 end
 function setSetting(setting, value)
@@ -170,7 +172,7 @@ end)
 --     sm = stringsplit(chatmsg, " ") 
 --     if OnlinePlayers[source].wl ~= nil then
 --         if OnlinePlayers[source].wl >= settings.modLevel then
---             ----------- Mod or ADmin Commands
+--             ----------- Mod or Admin Commands
 
 --             -- whitelist toggle
 --             if sm[1] == "/wltoggle" then
