@@ -1,7 +1,7 @@
 # MIAV
 FiveM Server Side Steam-Enforced Multi-tier Ping, White list and Ban script.
 # Installing  
-1. Edit "config.lua"
+1. Breathe in.... Breathe out...
 2. put MIAV2 folder in resources
 3. import the miav2.sql file to your database. it is configured for "essentialmode" database by default.
     meaning it will NOT disrupt your esx setup.
