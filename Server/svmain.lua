@@ -15,7 +15,11 @@ function has_value(tab, val)
 end
 function getSettings()
     local setters = MySQL.Sync.fetchAll('SELECT * FROM `_miav2_settings`')
-    local setMenu = '| Whitelist Required: '..tostring(setters[1].WL_Level)..' | RequireSteam: '..tostring(setters[1].requireSteam)..' | RequireDiscord: '..tostring(setters[1].requireDiscord)..' |'
+    local whitelistenabled = "true"
+    if setters[1].WL_Level == 0 then
+        whitelistenabled = "false"
+    end
+    local setMenu = '| Whitelist: '..whitelistenabled..' | RequireSteam: '..tostring(setters[1].requireSteam)..' | RequireDiscord: '..tostring(setters[1].requireDiscord)..' |'
     ExecuteCommand(('sets MIAV2 "%s"'):format(setMenu))
     return setters[1]
 end
