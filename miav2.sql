@@ -28,6 +28,7 @@ CREATE TABLE `_miav2_settings` (
 	`requireBanCheck` BOOLEAN DEFAULT TRUE,
     `pingThreshold` int(4) DEFAULT 750,
 	`WL_Level` INT(4) DEFAULT 0,
+    `regLevel` INT(4) DEFAULT 50,
     `modLevel` INT(4) DEFAULT 100,
     `AdminLevel` INT(4) DEFAULT 200,
     `kickMsgPing` TEXT NOT NULL,

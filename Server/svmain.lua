@@ -172,6 +172,38 @@ AddEventHandler('onMySQLReady', function ()
     updateLog("CORE LOADED")
 end)
 --
+AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)  
+    if debugMode == true then
+        setKickReason("[MIAV2: Testing Completed. Get out.]")
+    end
+    if isready == false then
+        setKickReason("[MIAV2: SQL Connection NOT Ready]")
+        CancelEvent()
+    end
+    settings = getSettings()
+    if settings.acceptPlayers == false then
+        setKickReason("[MIAV2: Connection Refused]")
+        CancelEvent()
+    else
+        playercheck = checkPlayer(source)
+        if playercheck ~= true then
+            updateLog(name .. ": ".. playercheck)
+            setKickReason("[MIAV2]: ".. playercheck)
+            CancelEvent()
+        else
+            updateLog("User Online: ".. OnlinePlayers[source].name.." ["..OnlinePlayers[source].identifier.."]") 
+        end
+    end
+    if debugMode == true then
+        CancelEvent()
+    end
+end)
+AddEventHandler('playerDropped', function()
+    updateLog('Player Drop: '.. GetPlayerName(source))
+    OnlinePlayers[source] = nil
+end)
+-------------------------- CODE NOT ADDED YET
+--
 -- AddEventHandler('chatMessage', function(source, name, msg) 
 --     sm = stringsplit(chatmsg, " ") 
 --     if OnlinePlayers[source].wl ~= nil then
@@ -222,33 +254,3 @@ end)
 --     end
 -- end)
 --
-AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)  
-    if debugMode == true then
-        setKickReason("[MIAV2: Testing Completed. Get out.]")
-    end
-    if isready == false then
-        setKickReason("[MIAV2: SQL Connection NOT Ready]")
-        CancelEvent()
-    end
-    settings = getSettings()
-    if settings.acceptPlayers == false then
-        setKickReason("[MIAV2: Connection Refused]")
-        CancelEvent()
-    else
-        playercheck = checkPlayer(source)
-        if playercheck ~= true then
-            updateLog(name .. ": ".. playercheck)
-            setKickReason("[MIAV2]: ".. playercheck)
-            CancelEvent()
-        else
-            updateLog("User Online: ".. OnlinePlayers[source].name.." ["..OnlinePlayers[source].identifier.."]") 
-        end
-    end
-    if debugMode == true then
-        CancelEvent()
-    end
-end)
-AddEventHandler('playerDropped', function()
-    updateLog('Player Drop: '.. GetPlayerName(source))
-    OnlinePlayers[source] = nil
-end)
