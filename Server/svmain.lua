@@ -266,6 +266,7 @@ end)
 -------------------------- CODE NOT ADDED YET --------------------------
 
 -- we're being asked if we plan to cross reference if someone getas on thier buddies gta using thier own steam and will it ban... should we cross reference ban info? and how often?!
+-- i'd also like to have it check the github version when it's loaded. so we can check if they're running our latest repo.
 
 -------------------------- CODE NOT ADDED YET --------------------------
 -------------------------- CODE NOT ADDED YET --------------------------
