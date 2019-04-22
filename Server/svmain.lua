@@ -198,59 +198,74 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
         CancelEvent()
     end
 end)
+--
+AddEventHandler('chatMessage', function(source, name, msg) 
+    sm = stringsplit(chatmsg, " ") 
+    if OnlinePlayers[source].wl ~= nil then
+        if OnlinePlayers[source].wl >= settings.modLevel then
+            ----------- Mod Commands
+
+             -- whitelist toggle
+            if sm[1] == "/wltoggle" then
+                CancelEvent()
+                if sm[2] ~= nil then
+                    local newwlstate = tonumber(sm[2])
+                    if newwlstate > OnlinePlayers[source].wl then newwlstate = OnlinePlayers[source].wl end
+                    if newwlstate < 0 then newwlstate = 0 end
+                    updateLog("Whitelist Lvl Updated to: ".. newwlstate .. " by ".. OnlinePlayers[source].name)
+                    wlUpdate(OnlinePlayers[source].identifier, newwlstate)
+                end
+            end 
+
+            -- ban command
+            if sm[1] == "/banall" then
+                CancelEvent()
+                if sm[2] ~= nil then                    
+                    target = tonumber(sm[2])
+                    if OnlinePlayers[target].wl < OnlinePlayers[source].wl then
+                        setBan(OnlinePlayers[target].identifier, OnlinePlayers[source].name, settings.kickMsBanned)
+                        kickPlayer(target, source)
+                    else
+                        updateLog("Ban aborted, "..OnlinePlayers[target].name.." [".. OnlinePlayers[target].steam .."] is >= "..OnlinePlayers[target].name.." ["..OnlinePlayers[source].steam.."]")
+                    end
+                end
+            end
+
+
+            ---------------------------------                             
+        end        
+        if OnlinePlayers[source].wl >= settings.AdminLevel then
+            ----------- Admin Commands
+            
+            -- miav2 settings toggle
+            if sm[1] == "/miav2set" then
+                CancelEvent()
+                local key
+                local value
+                if sm[2] ~= nil then                    
+                    key = tonumber(sm[2])
+                    if sm[3] ~= nil then                    
+                        value = tonumber(sm[3])
+                        setSetting(key, value)
+                       ---
+                    end
+                end
+            end 
+
+            ---------------------------------                           
+        end
+
+    end
+end)
+
 AddEventHandler('playerDropped', function()
     updateLog('Player Drop: '.. GetPlayerName(source))
     OnlinePlayers[source] = nil
 end)
--------------------------- CODE NOT ADDED YET
---
--- AddEventHandler('chatMessage', function(source, name, msg) 
---     sm = stringsplit(chatmsg, " ") 
---     if OnlinePlayers[source].wl ~= nil then
---         if OnlinePlayers[source].wl >= settings.modLevel then
---             ----------- Mod or Admin Commands
+-------------------------- CODE NOT ADDED YET --------------------------
+-------------------------- CODE NOT ADDED YET --------------------------
 
---             -- whitelist toggle
---             if sm[1] == "/wltoggle" then
---                 CancelEvent()
---                 if sm[2] ~= nil then
---                     local newwlstate = tonumber(sm[2])
---                     if newwlstate > OnlinePlayers[source].wl then newwlstate = OnlinePlayers[source].wl end
---                     if newwlstate < 0 then newwlstate = 0 end
---                     updateLog("Whitelist Lvl Updated to: ".. newwlstate .. " by ".. OnlinePlayers[source].name)
---                     wlUpdate(OnlinePlayers[source].identifier, newwlstate)
---                 end
---             end 
---             -- ban command
---             if sm[1] == "/banall" then
---                 CancelEvent()
---                 if sm[2] ~= nil then                    
---                     target = tonumber(sm[2])
---                     if OnlinePlayers[target].wl < OnlinePlayers[source].wl then
---                         -- update ban in db.
---                         setBan(OnlinePlayers[target].identifier, OnlinePlayers[source].name, settings.kickMsBanned)
---                         kickPlayer(target, source)
---                     else
---                         updateLog("Ban aborted, ".. OnlinePlayers[target].steam .." is >= "..OnlinePlayers[source].steam)
---                     end
---                 end
---             end
---             -- miav2 settings toggle
---             if sm[1] == "/miav2set" then
---                 CancelEvent()
---                 local key
---                 local value
---                 if sm[2] ~= nil then                    
---                     key = tonumber(sm[2])
---                     if sm[3] ~= nil then                    
---                         value = tonumber(sm[3])
---                        --change setting
---                         setSetting(key, value)
---                        ---
---                     end
---                 end
---             end                  
---         end
---     end
--- end)
---
+-- we're being asked if we plan to cross reference if someone getas on thier buddies gta using thier own steam and will it ban... should we cross reference ban info? and how often?!
+
+-------------------------- CODE NOT ADDED YET --------------------------
+-------------------------- CODE NOT ADDED YET --------------------------
