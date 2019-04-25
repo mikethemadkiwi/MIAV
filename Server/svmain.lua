@@ -179,6 +179,10 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
     if isready == false then
         setKickReason("[MIAV2: SQL Connection NOT Ready]")
         CancelEvent()
+    end 
+    if #OnlinePlayers >= GetConvarInt('sv_maxclients', 64) then
+        setReason('This server is full ')
+        CancelEvent()
     end
     settings = getSettings()
     if settings.acceptPlayers == false then
@@ -199,63 +203,64 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
     end
 end)
 --
-AddEventHandler('chatMessage', function(source, name, msg) 
-    sm = stringsplit(chatmsg, " ") 
-    if OnlinePlayers[source].wl ~= nil then
-        if OnlinePlayers[source].wl >= settings.modLevel then
-            ----------- Mod Commands
+AddEventHandler('chatMessage', function(source, name, msg)
+    -- print(source..'<'..name..'> '..msg..'')
+    sm = stringsplit(msg, " ")    
+    -- if OnlinePlayers[source] ~= nil then
+    --     if OnlinePlayers[source].wl >= settings.modLevel then
+    -- --         ----------- Mod Commands
 
-             -- whitelist toggle
-            if sm[1] == "/wltoggle" then
-                CancelEvent()
-                if sm[2] ~= nil then
-                    local newwlstate = tonumber(sm[2])
-                    if newwlstate > OnlinePlayers[source].wl then newwlstate = OnlinePlayers[source].wl end
-                    if newwlstate < 0 then newwlstate = 0 end
-                    updateLog("Whitelist Lvl Updated to: ".. newwlstate .. " by ".. OnlinePlayers[source].name)
-                    wlUpdate(OnlinePlayers[source].identifier, newwlstate)
-                end
-            end 
+    -- --          -- whitelist toggle
+    --         if sm[1] == "/wltoggle" then
+    --             if sm[2] ~= nil then
+    --                 local newwlstate = tonumber(sm[2])
+    --                 if newwlstate > OnlinePlayers[source].wl then newwlstate = OnlinePlayers[source].wl end
+    --                 if newwlstate < 0 then newwlstate = 0 end
+    --                 updateLog("Whitelist Lvl Updated to: ".. newwlstate .. " by ".. OnlinePlayers[source].name)
+    --                 wlUpdate(OnlinePlayers[source].identifier, newwlstate)
+    --             end
+    --             CancelEvent()
+    --         end 
 
-            -- ban command
-            if sm[1] == "/banall" then
-                CancelEvent()
-                if sm[2] ~= nil then                    
-                    target = tonumber(sm[2])
-                    if OnlinePlayers[target].wl < OnlinePlayers[source].wl then
-                        setBan(OnlinePlayers[target].identifier, OnlinePlayers[source].name, settings.kickMsBanned)
-                        kickPlayer(target, source)
-                    else
-                        updateLog("Ban aborted, "..OnlinePlayers[target].name.." [".. OnlinePlayers[target].steam .."] is >= "..OnlinePlayers[target].name.." ["..OnlinePlayers[source].steam.."]")
-                    end
-                end
-            end
+    -- --         -- ban command
+    --         if sm[1] == "/banall" then
+    --             if sm[2] ~= nil then                    
+    --                 target = tonumber(sm[2])
+    --                 if OnlinePlayers[target].wl < OnlinePlayers[source].wl then
+    --                     setBan(OnlinePlayers[target].identifier, OnlinePlayers[source].name, settings.kickMsBanned)
+    --                     kickPlayer(target, source)
+    --                 else
+    --                     updateLog("Ban aborted, "..OnlinePlayers[target].name.." [".. OnlinePlayers[target].steam .."] is >= "..OnlinePlayers[target].name.." ["..OnlinePlayers[source].steam.."]")
+    --                 end
+    --             end
+    --             CancelEvent()
+    --         end
 
 
-            ---------------------------------                             
-        end        
-        if OnlinePlayers[source].wl >= settings.AdminLevel then
-            ----------- Admin Commands
+    -- --         ---------------------------------                             
+    --     end        
+    --     if OnlinePlayers[source].wl >= settings.AdminLevel then
+    -- --         ----------- Admin Commands
             
-            -- miav2 settings toggle
-            if sm[1] == "/miav2set" then
-                CancelEvent()
-                local key
-                local value
-                if sm[2] ~= nil then                    
-                    key = tonumber(sm[2])
-                    if sm[3] ~= nil then                    
-                        value = tonumber(sm[3])
-                        setSetting(key, value)
-                       ---
-                    end
-                end
-            end 
+    --         -- miav2 settings toggle
+    --         if sm[1] == "/miav2set" then
+    --             local key
+    --             local value
+    --             if sm[2] ~= nil then                    
+    --                 key = tonumber(sm[2])
+    --                 if sm[3] ~= nil then                    
+    --                     value = tonumber(sm[3])
+    --                     setSetting(key, value)
+    --                    ---
+    --                 end
+    --             end
+    --             CancelEvent()
+    --         end 
 
-            ---------------------------------                           
-        end
+    --         ---------------------------------                           
+    --     end
 
-    end
+    -- end
 end)
 
 AddEventHandler('playerDropped', function()
