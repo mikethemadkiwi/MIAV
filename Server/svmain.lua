@@ -97,6 +97,9 @@ function checkPlayer(player)
             discord = v
         end
     end
+    if not license then
+        return "Dafugg? no license, no come in. kthnxbye" -- why are you loggin in while not using license, get out.
+    end
     if settings.requireSteam == true then
         if not steam then
             return settings.kickMsgSteam
