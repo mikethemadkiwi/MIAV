@@ -1,5 +1,5 @@
-USE `essentialmode`;
-CREATE TABLE `_miav2` (
+USE `essentialmode`;/* <<<<<<<<<< CHANGE THIS TO YOUR DATABASE */
+CREATE TABLE `_miav2Users` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`identifier` varchar(255) NOT NULL,
     `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -15,11 +15,11 @@ CREATE TABLE `_miav2` (
     `banReason` varchar(255) NOT NULL,
 	PRIMARY KEY (`id`)
 );
-CREATE TABLE `_miav2_log` (
+CREATE TABLE `_miav2Log` (
     `date` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `logmsg` TEXT NOT NULL
 );
-CREATE TABLE `_miav2_settings` (
+CREATE TABLE `_miav2Settings` (
 	`id` int(1) NOT NULL AUTO_INCREMENT,
 	`acceptPlayers` BOOLEAN DEFAULT TRUE,
 	`requireSteam` BOOLEAN DEFAULT FALSE,
@@ -38,7 +38,7 @@ CREATE TABLE `_miav2_settings` (
     `kickMsgBanned` TEXT NOT NULL,
     PRIMARY KEY (`id`)
 );
-INSERT INTO _miav2_settings (kickMsgPing, kickMsgSteam, kickMsgDiscord, kickMsgWhitelist, kickMsgBanned)
+INSERT INTO _miav2Settings (kickMsgPing, kickMsgSteam, kickMsgDiscord, kickMsgWhitelist, kickMsgBanned)
 VALUES (
     "Your ping is too high!",
     "No Steam. Restart Steam and Fivem",

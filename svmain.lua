@@ -14,7 +14,7 @@ function has_value(tab, val)
     return false
 end
 function getSettings()
-    local setters = MySQL.Sync.fetchAll('SELECT * FROM `_miav2_settings`')
+    local setters = MySQL.Sync.fetchAll('SELECT * FROM `_miav2Settings`')
     local whitelistenabled = "true"
     if setters[1].WL_Level == 0 then
         whitelistenabled = "false"
@@ -34,7 +34,7 @@ function setSetting(setting, value)
         'WL_Level'
     }
     if has_value(s, setting) then
-        return MySQL.Sync.execute('UPDATE `_miav2_settings` SET @setting = @value', {
+        return MySQL.Sync.execute('UPDATE `_miav2Settings` SET @setting = @value', {
             ['@setting'] = setting,
             ['@value'] = value
         })
@@ -43,7 +43,7 @@ function setSetting(setting, value)
 end
 function createUser(identifier, name, steam, discord, ip)
     MySQL.Sync.execute(
-        'INSERT INTO `_miav2` (identifier, name, steam, discord, ip) VALUES (@identifier, @name, @steam, @discord, @ip)', {
+        'INSERT INTO `_miav2Users` (identifier, name, steam, discord, ip) VALUES (@identifier, @name, @steam, @discord, @ip)', {
             ['@identifier'] = identifier,
             ['@name']       = name,
             ['@steam']      = steam,
@@ -55,7 +55,7 @@ function createUser(identifier, name, steam, discord, ip)
         end)
 end
 function updateIdentifiers(identifier, name, steam, discord, ip)
-    MySQL.Async.execute("UPDATE `_miav2` SET name=@name, steam=@steam, discord=@discord, ip=@ip WHERE identifier=@identifier", {
+    MySQL.Async.execute("UPDATE `_miav2Users` SET name=@name, steam=@steam, discord=@discord, ip=@ip WHERE identifier=@identifier", {
         ['@identifier'] = identifier,
         ['@name'] = name,
         ['@steam'] = steam,
@@ -64,7 +64,7 @@ function updateIdentifiers(identifier, name, steam, discord, ip)
     })
 end
 function getUser(license)
-    local users = MySQL.Sync.fetchAll('SELECT * FROM `_miav2` WHERE `identifier` = @identifier', {
+    local users = MySQL.Sync.fetchAll('SELECT * FROM `_miav2Users` WHERE `identifier` = @identifier', {
         ['@identifier'] = license,
     })
     return users[1]
@@ -136,19 +136,19 @@ end
 function updateLog(text)
     text = '[MIAV2]: '..text
     print(text)
-    return MySQL.Async.execute('INSERT INTO `_miav2_log` (`logmsg`) VALUES (@text)', {
+    return MySQL.Async.execute('INSERT INTO `_miav2Log` (`logmsg`) VALUES (@text)', {
         ['@text'] = text
     })
 end
 function setBan(identifier, banBy, banReason)
-    return MySQL.Async.execute('UPDATE `_miav2` SET `banned` = 1, `banBy` = @banBy, `banReason` = @banReason where `identifier` = @identifier', {
+    return MySQL.Async.execute('UPDATE `_miav2Users` SET `banned` = 1, `banBy` = @banBy, `banReason` = @banReason where `identifier` = @identifier', {
         ['@identifier'] = identifier,
         ['@banBy'] = banBy,
         ['@banReason'] = banReason
     })
 end
 function wlUpdate(identifier, state)
-    return MySQL.Async.execute('UPDATE `_miav2` set `wl` = @wl where `identifier` = @identifier', {
+    return MySQL.Async.execute('UPDATE `_miav2Users` set `wl` = @wl where `identifier` = @identifier', {
         ['@identifier'] = identifier,
         ['@wl'] = state
     })
