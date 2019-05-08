@@ -1,0 +1,3 @@
+--This empty file causes the client to load the internal callbacks.
+--Even though the handler code is entirely server side,
+--Without this, callbacks will only work server->client and not client->server.

@@ -208,7 +208,15 @@ end)
 --
 AddEventHandler('chatMessage', function(source, name, msg)
     -- print(source..'<'..name..'> '..msg..'')
-    sm = stringsplit(msg, " ")    
+    sm = stringsplit(msg, " ") 
+end)
+
+AddEventHandler('playerDropped', function()
+    updateLog('Player Drop: '.. GetPlayerName(source))
+    OnlinePlayers[source] = nil
+end)
+-------------------------- CODE NOT ADDED YET --------------------------
+-------------------------- CODE NOT ADDED YET --------------------------
     -- if OnlinePlayers[source] ~= nil then
     --     if OnlinePlayers[source].wl >= settings.modLevel then
     -- --         ----------- Mod Commands
@@ -264,17 +272,5 @@ AddEventHandler('chatMessage', function(source, name, msg)
     --     end
 
     -- end
-end)
-
-AddEventHandler('playerDropped', function()
-    updateLog('Player Drop: '.. GetPlayerName(source))
-    OnlinePlayers[source] = nil
-end)
--------------------------- CODE NOT ADDED YET --------------------------
--------------------------- CODE NOT ADDED YET --------------------------
-
--- we're being asked if we plan to cross reference if someone getas on thier buddies gta using thier own steam and will it ban... should we cross reference ban info? and how often?!
--- i'd also like to have it check the github version when it's loaded. so we can check if they're running our latest repo.
-
 -------------------------- CODE NOT ADDED YET --------------------------
 -------------------------- CODE NOT ADDED YET --------------------------
