@@ -1,5 +1,11 @@
 # MIAV
-FiveM Server Side Steam-Enforced Multi-tier Ping, White list and Ban script.
+  
+FiveM Server Side Steam-Enforced Multi-tier Ping, White list and Ban script.  
+NOTE: A more advanced version of this script exists at :  
+https://github.com/mikethemadkiwi/MIAV/tree/MIAV2  
+IF you cannot run MYSQL.
+run this version... else run the one above!!
+  
 # Installing  
 1. Edit the ranks in "MIAV_config.lua"
 2. put MIAV folder in resources  
