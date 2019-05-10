@@ -1,18 +1,18 @@
-USE `essentialmode`;/* <<<<<<<<<< CHANGE THIS TO YOUR DATABASE */
+USE `fivem`;/* <<<<<<<<<< CHANGE THIS TO YOUR DATABASE */
 CREATE TABLE `_miav2Users` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`identifier` varchar(255) NOT NULL,
     `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `lastSeen` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`name` varchar(255) NOT NULL,
+	`name` varchar(255) DEFAULT NULL,
     `steam` varchar(255),
     `discord` varchar(255),
     `ip` varchar(255),
     `wl` int(11) DEFAULT 0,
     `banned` INT(4) DEFAULT NULL,
-    `banBy` varchar(255) NOT NULL,
+    `banBy` varchar(255) DEFAULT NULL,
     `banDate` DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    `banReason` varchar(255) NOT NULL,
+    `banReason` varchar(255) DEFAULT NULL,
 	PRIMARY KEY (`id`)
 );
 CREATE TABLE `_miav2Log` (
