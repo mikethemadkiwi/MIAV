@@ -172,6 +172,7 @@ AddEventHandler('onMySQLReady', function ()
     if settings ~= nil then
         isready = true
     end
+    updateCheck()
     updateLog("CORE LOADED")
 end)
 --
@@ -217,6 +218,23 @@ AddEventHandler('playerDropped', function()
 end)
 -------------------------- CODE NOT ADDED YET --------------------------
 -------------------------- CODE NOT ADDED YET --------------------------
+------------------------------------------------------------------------
+function updateCheck()
+    local CurrentVersion = LoadResourceFile(GetCurrentResourceName(), "VERSION")
+    PerformHttpRequest('https://raw.githubusercontent.com/mikethemadkiwi/MIAV/MIAV2/VERSION', function(Error, NewestVersion, Header)
+            if tonumber(CurrentVersion) ~= tonumber(NewestVersion) then
+                updateLog('MIAV2 HAS UPDATED!!!! Get the newest updates!! NAO!!!')
+                updateLog('https://github.com/mikethemadkiwi/MIAV/blob/MIAV2/')
+            else
+                updateLog('MIAV2 is at Latest Version.')
+            end
+    end)
+end
+
+
+
+
+
     -- if OnlinePlayers[source] ~= nil then
     --     if OnlinePlayers[source].wl >= settings.modLevel then
     -- --         ----------- Mod Commands
