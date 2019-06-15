@@ -194,7 +194,7 @@ function chatMsgHandler(source, name, msg)
                     if sm[2] ~= nil then 
                         if sm[3] ~= nil then
                             local target = getUserFromSource(tonumber(sm[2]))
-                            
+
                             local newwlstate = tonumber(sm[3])
                             if newwlstate >= user.wl then newwlstate = user.wl end
                             if newwlstate < 0 then newwlstate = 0 end
@@ -249,6 +249,9 @@ function updateCheck()
                 updateLog('MIAV2 HAS UPDATED!!!! Get the newest updates!! NAO!!!')
                 updateLog('https://github.com/mikethemadkiwi/MIAV/blob/MIAV2/')
             else
+                if tonumber(CurrentVersion) > tonumber(NewestVersion) then
+                    updateLog('Welcome to the BETA group')
+                end
                 updateLog('MIAV2 is at Latest Version.')
             end
             CurrentVersion = nil
@@ -295,9 +298,9 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
 end)
 AddEventHandler('chatMessage', function(source, name, msg)
     local chatmsg = chatMsgHandler(source, name, msg)
-    -- if chatmsg == true then
-    --     CancelEvent()
-    -- end 
+    if chatmsg == true then
+        CancelEvent()
+    end 
 end)
 AddEventHandler('playerDropped', function()
     updateLog('Player Drop: '.. GetPlayerName(source))
