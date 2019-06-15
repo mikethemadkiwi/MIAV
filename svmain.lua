@@ -238,6 +238,21 @@ function chatMsgHandler(source, name, msg)
                         end
                     end
                 end
+                -- banlist 
+                if sm[1] == "/mv2banlist" then
+                    iscommand = true
+                    if sm[2] ~= nil then 
+                        local newwlstate = tonumber(sm[2])
+                        if newwlstate > user.wl then newwlstate = user.wl end
+                        if newwlstate < 0 then newwlstate = 0 end
+                        wlSettingUpdate(newwlstate)
+                        updateLog("Global Whitelist Lvl Updated to: ".. newwlstate .. " by ".. user.name)
+                    end
+                end 
+
+
+
+                
             end
         end
     return iscommand -- if this returns true, the msg is a command and should be cancelled.
