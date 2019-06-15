@@ -3,6 +3,22 @@ debugMode = false
 settings = {}
 OnlinePlayers = {}
 -- FUNCTIONS
+function Strip_Control_and_Extended_Codes( str )
+    local s = ""
+    for i = 1, str:len() do
+	if str:byte(i) >= 32 and str:byte(i) <= 126 then
+  	    s = s .. str:sub(i,i)
+	end
+    end
+    return s
+end
+function Strip_Control_Codes( str )
+    local s = ""
+    for i in str:gmatch( "%C+" ) do
+ 	s = s .. i
+    end
+    return s
+end
 function has_value(tab, val)
     for index, value in ipairs(tab) do
         if value == val then
@@ -77,7 +93,7 @@ function checkPlayer(player)
     local license = nil
     local ip = nil
     local discord = nil
-    local name = GetPlayerName(player)
+    local name = Strip_Control_and_Extended_Codes(GetPlayerName(player)) 
     for k,v in ipairs(GetPlayerIdentifiers(player))do
         if string.sub(v, 1, string.len("steam:")) == "steam:" then
             steam = v
@@ -165,10 +181,71 @@ function stringsplit(inputstr, sep)
     end
     return t
 end
+function chatMsgHandler(source, name, msg)
+    local user = getUserFromSource(source)
+    settings = getSettings()
+    sm = stringsplit(msg, " ")
+    local iscommand = false
+        if user.wl >= settings.modLevel then            
+            if sm[1] ~= nil then
+                -- WL userlevel 
+                if sm[1] == "/wluser" then
+                    iscommand = true
+                    if sm[2] ~= nil then 
+                        if sm[3] ~= nil then
+                            local target = getUserFromSource(tonumber(sm[2]))
+                            
+                            local newwlstate = tonumber(sm[3])
+                            if newwlstate >= user.wl then newwlstate = user.wl end
+                            if newwlstate < 0 then newwlstate = 0 end
+                            wlUserUpdate(target.identifier, newwlstate)
+                            updateLog("Whitelist Lvl of ".. target.name .."Updated to: ".. newwlstate .. " by ".. user.name)
+                        end
+                    end
+                end
+                -- WL Toggle 
+                if sm[1] == "/wltoggle" then
+                    iscommand = true
+                    if sm[2] ~= nil then 
+                        local newwlstate = tonumber(sm[2])
+                        if newwlstate > user.wl then newwlstate = user.wl end
+                        if newwlstate < 0 then newwlstate = 0 end
+                        wlSettingUpdate(newwlstate)
+                        updateLog("Global Whitelist Lvl Updated to: ".. newwlstate .. " by ".. user.name)
+                    end
+                end 
+                -- -- Ban All Cmmand
+                if sm[1] == "/mv2ban" then
+                    iscommand = true
+                    if sm[2] ~= nil then 
+                        local target = getUserFromSource(tonumber(sm[2]))
+                        if target.wl < user.wl then
+                            local reason = nil
+                            if sm[3] ~= nil then
+                                sm[1] = nil
+                                sm[2] = nil
+                                for k,v in pairs(sm) do
+                                    reason = ''..reason.." "..sm[k]
+                                end
+                                setBan(target.identifier, user.name, reason)
+                                kickPlayer(target, reason)                    
+                            else
+                                setBan(target.identifier, user.name, settings.kickMsgBanned)
+                                kickPlayer(target, settings.kickMsgBanned)
+                            end
+                        else
+                            updateLog('User level ~> target level, ban aborted {mv2ban}')
+                        end
+                    end
+                end
+            end
+        end
+    return iscommand -- if this returns true, the msg is a command and should be cancelled.
+end
 function updateCheck()
     local CurrentVersion = LoadResourceFile(GetCurrentResourceName(), "VERSION")
     PerformHttpRequest('https://raw.githubusercontent.com/mikethemadkiwi/MIAV/MIAV2/VERSION', function(Error, NewestVersion, Header)
-            if tonumber(CurrentVersion) ~= tonumber(NewestVersion) then
+            if tonumber(CurrentVersion) < tonumber(NewestVersion) then
                 updateLog('MIAV2 HAS UPDATED!!!! Get the newest updates!! NAO!!!')
                 updateLog('https://github.com/mikethemadkiwi/MIAV/blob/MIAV2/')
             else
@@ -183,7 +260,7 @@ AddEventHandler('onMySQLReady', function ()
     if settings ~= nil then
         isready = true
     end
-    updateCheck() -- MOFO IS MY HAPPY
+    updateCheck()
     updateLog("CORE LOADED")
 end)
 AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)  
@@ -205,11 +282,11 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
     else
         playercheck = checkPlayer(source)
         if playercheck ~= true then
-            updateLog(name .. ": ".. playercheck)
+            updateLog(tostring(name) .. ": ".. playercheck)
             setKickReason("[MIAV2]: ".. playercheck)
             CancelEvent()
         else
-            updateLog("User Online: ".. OnlinePlayers[source].name.." ["..OnlinePlayers[source].identifier.."]") 
+            updateLog("User Online: ".. tostring(OnlinePlayers[source].name) .." ["..OnlinePlayers[source].identifier.."]") 
         end
     end
     if debugMode == true then
@@ -218,7 +295,9 @@ AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
 end)
 AddEventHandler('chatMessage', function(source, name, msg)
     local chatmsg = chatMsgHandler(source, name, msg)
-    CancelEvent() -- stop the event from being shown to the clients.
+    -- if chatmsg == true then
+    --     CancelEvent()
+    -- end 
 end)
 AddEventHandler('playerDropped', function()
     updateLog('Player Drop: '.. GetPlayerName(source))
@@ -240,73 +319,12 @@ function setSetting(setting, value)
     }
     if has_value(s, setting) then
         return MySQL.Sync.execute('UPDATE `_miav2Settings` SET @setting = @value', {
-            ['@setting'] = tostring(setting),
+            ['@setting'] = setting,
             ['@value'] = value
         })
     end
     settings = getSettings()
 end
 
-function chatMsgHandler(source,name,msg)
-    local user = getUserFromSource(source)
-    sm = stringsplit(msg, " ")
-        if user.wl >= settings.modLevel then            
-            if sm[1] ~= nil then
-                -- WL userlevel 
-                if sm[1] == "/wluser" then
-                    if sm[2] ~= nil then 
-                        if sm[3] ~= nil then
-                            local target = getUserFromSource(tonumber(sm[2]))
-                            local newwlstate = tonumber(sm[3])
-                            if newwlstate >= user.wl then newwlstate = user.wl end
-                            if newwlstate < 0 then newwlstate = 0 end
-                            wlUserUpdate(target.identifier, newwlstate)
-                            updateLog("Whitelist Lvl of ".. target.name .."Updated to: ".. newwlstate .. " by ".. user.name)
-                        end
-                    end
-                end
-                -- WL Toggle 
-                if sm[1] == "/wltoggle" then
-                    if sm[2] ~= nil then 
-                        local newwlstate = tonumber(sm[2])
-                        if newwlstate > user.wl then newwlstate = user.wl end
-                        if newwlstate < 0 then newwlstate = 0 end
-                        wlSettingUpdate(newwlstate)
-                        updateLog("Global Whitelist Lvl Updated to: ".. newwlstate .. " by ".. user.name)
-                    end
-                end 
-                -- Ban All Cmmand
-                if sm[1] == "/banall" then
-                    if sm[2] ~= nil then
-                        local target = getUserFromSource(tonumber(sm[2]))
-                        if target.wl < user.wl then
-                            setBan(target.identifier, user.name, settings.kickMsBanned)
-                            kickPlayer(target, source)
-                        else
-                            updateLog("Ban aborted, "..target.name.." [".. target.steam .."] is >= "..user.name.." ["..user.steam.."]")
-                        end
-                    end
-                end
-            end
-        end
-        if user.wl >= settings.AdminLevel then        
-            if sm[1] ~= nil then  
-                -- miav2 settings toggle
-                -- if sm[1] == "/miav2set" then
-                --     local key
-                --     local value
-                --     if sm[2] ~= nil then                    
-                --         key = sm[2]
-                --         if sm[3] ~= nil then                    
-                --             value = tonumber(sm[3])
-                --             setSetting(key, value)
-                --         ---
-                --         end
-                --     end
-                -- end
-            end
-        end
-    return
-end
 -------------------------- CODE NOT ADDED YET --------------------------
 -------------------------- CODE NOT ADDED YET --------------------------
