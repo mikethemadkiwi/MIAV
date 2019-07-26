@@ -1,0 +1,3 @@
+* Complete Rewrite of the SQL and Command Engine
+* node based permission system, including individual as well as group perms.
+* Outputs server and client call based on client connection and client ped spawn.
