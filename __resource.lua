@@ -1,24 +1,25 @@
 resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
-description 'Ban and Client Mitigation Script. V2.'
-
--- Banlist NUI
+description 'MIAV2 Ban and Client Mitigation Script.'
 ui_page 'nui/ui.html'
-
--- Client
-client_scripts {
-	'empty.lua'
+local ClientScripts = {
+	'mv2Client.lua'
 } 
--- Server
-server_scripts {
+local ServerScripts = {
 	'@mysql-async/lib/MySQL.lua',
-	'svmain.lua'
+	'mv2Server.lua'
 }
--- NUI Files
-files {
+local ServerExports = {
+    'getUser'
+}
+local ReqFiles = {
     'nui/index.html',
-    'VERSION'
+    'VERSION',
+    'CHANGES'
 }
--- Dependancies
+files(ReqFiles)
+client_scripts(ClientScripts)
+server_scripts(ServerScripts)
+server_exports(ServerExports)
 dependencies {
 	'mysql-async'
 }
