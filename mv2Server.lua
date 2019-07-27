@@ -399,19 +399,22 @@ function playerConnect(name, setKickReason, deferrals)
   else
       update("[ Creating a User Profile ]")
       Citizen.Wait(1000)
-      local newuser = createUser(identifiers.license, json.encode(identifiers))
-     ----
-      if settings.requireWhitelist == true then
+      newuser = createUser(identifiers.license, json.encode(identifiers))
+      if newuser ~= nil then     
+        if settings.requireWhitelist == true then
         update("[ Whitelist is enabled. Confirming Access ]")
         Citizen.Wait(1000)
         if settings.WL_Level > newuser.wl then 
           done(settings.kickMsgWhitelist)
         end
+      else
+        done("how are you not a real boy?")
       end
       update("[ Security Checks Complete. Enjoy! ]")
       Citizen.Wait(2000)
       done()
-      return
+      end
+     ---- 
   end
   -- --- END THE DIFFERALS
   done("MIAV2 : Something went terribly wrong")
@@ -489,37 +492,51 @@ RegisterCommand("mv2", function(source, args, rawCommand)
               TriggerClientEvent('chatMessage', -1, "MIAV2", { 0, 255, 0 }, "This Banscript was Created by Madkiwi and SinaCutie, and scrutinized by Papa-Bendi and the members of the Ausdoj and ParadiseRP Dev teams. Thanks!")
         
               
-            ------------------------------- Ticket
-            -- elseif args[1] == 'ticket' then
+            ----------------------------- Ticket
+            elseif args[1] == 'ticket' then
 
-            --   --##################################################
-            --   if args[2] ~= nil then
+              --##################################################
+              if args[2] ~= nil then
 
-            --     if args[2] == 'create' then
+                if args[2] == 'create' then
+                  if IsPlayerAceAllowed(source, "miav2.ticket.create") then
+                   debugPrint('miav2.ticket.create')
+                  else
+                   -- cannot run command no perms
+                  end
 
-            --       if IsPlayerAceAllowed(source, "miav2.ticket.create") then
-            --        debugPrint('canrun')
-            --       else
-            --        debugPrint('cantrun')
-            --       end
+                elseif args[2] == 'update' then
+                  if IsPlayerAceAllowed(source, "miav2.ticket.update") then
+                    debugPrint('miav2.ticket.update')
+                  else
+                   -- cannot run command no perms
+                  end
 
-            --     elseif args[2] == 'update' then
+                elseif args[2] == 'transfer' then
+                  if IsPlayerAceAllowed(source, "miav2.ticket.transfer") then
+                    debugPrint('miav2.ticket.transfer')
+                  else
+                   -- cannot run command no perms
+                  end
 
-            --       if IsPlayerAceAllowed(source, "miav2.ticket.update") then
-            --        debugPrint('canrun')
-            --       else
-            --        debugPrint('cantrun')
-            --       end
+                elseif args[2] == 'close' then
+                  if IsPlayerAceAllowed(source, "miav2.ticket.close") then
+                    debugPrint('miav2.ticket.close')
+                  else
+                   -- cannot run command no perms
+                  end
 
-            --     else
-            --       print (' wot? thats not a ticket command ')
-            --     end
+
+
+                else
+                  TriggerClientEvent('chatMessage', source, "MIAV2", { 255, 0, 0 }, "That is not a \"ticket\" subcommand. create|update|transfer|close")
+                end
 
                 
-            --   else
-            --    debugPrint('no ticket subcommand, you need one. derpr')
-            --   end
-            --   --##################################################
+              else
+                TriggerClientEvent('chatMessage', source, "MIAV2", { 255, 0, 0 }, "No \"ticket\" subcommand specified. Examples: create|update|transfer|close")
+              end
+              --##################################################
 
             ------------------------------- KICK
             elseif args[1] == 'kick' then
@@ -571,6 +588,13 @@ RegisterCommand("mv2", function(source, args, rawCommand)
               else
                 TriggerClientEvent('chatMessage', source, "MIAV2", { 255, 0, 0 }, "You do NOT have permission to run this command.")
               end
+              ------------------------------- UNBAN
+              elseif args[1] == 'unban' then
+                if IsPlayerAceAllowed(source, "miav2.unban") then
+                  -- do load of nui after we've called called the sql for "isbanned" users.
+                else
+                  TriggerClientEvent('chatMessage', source, "MIAV2", { 255, 0, 0 }, "You do NOT have permission to run this command.")
+                end
             ------------------------------- RELOAD
             elseif args[1] == 'reload' then
               if IsPlayerAceAllowed(source, "miav2.reload") then
@@ -596,9 +620,9 @@ RegisterCommand("mv2", function(source, args, rawCommand)
   
   else           
     
-    
+    -- Console Commands
     --##############
-            -- Console Commands
+            
             if args[1] == 'info' then              
               local CurrentVersion = LoadResourceFile(GetCurrentResourceName(), "VERSION")
              debugPrint('Version '.. tostring(CurrentVersion))
@@ -646,9 +670,9 @@ RegisterCommand("mv2", function(source, args, rawCommand)
             elseif args[1] == 'reload' then
 
               settings = getSettings()
-             debugPrint('Reloaded settings from MYSQL') 
+              debugPrint('Reloaded settings from MYSQL') 
             elseif args[1] == 'users' then
-             debugPrint("Online Players")
+              debugPrint("Online Players")
               for key, val in pairs(OnlinePlayers) do
                debugPrint(key, ""..val.name.." { "..val.license.." } | IP: "..val.ip.." |")
               end
@@ -690,3 +714,4 @@ Citizen.CreateThread(function()
     miav2TagUpdate(uptime)
 	end
 end)
+--------------------------------------------------
