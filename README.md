@@ -4,27 +4,81 @@ FiveM Server Side Steam-Enforced Multi-tier Ping, White list and Ban script.
 # Installing  
 1. Breathe in.... Breathe out...  
 2. put MIAV2 folder in resources  
-3. import the miav2.sql file to your database. it is configured for "essentialmode" database by default.  
-    meaning it will NOT disrupt your esx setup. change it if your database is not named "essentialmode".  
-4. add the following to the top of your server.cfg  
-    set mysql_connection_string "server=localhost;uid=mysqluser;password=password;database=essentialmode"  
-    add_ace resource.MIAV2 command.sets allow  
+3. import the miav2.sql file to your database.   
+NOTE!!! CHNAGE THE DEFAULT DATABASE NAME AT THE TOP OF THE FILE  
+4. add the following to the bottom of your server.cfg  
+```
+########################################################
+# MIAV2
+########################################################
+add_ace resource.MIAV2 command allow
+add_ace resource.MIAV2 command.quit deny
+########################################################
+# MIAV2 EVERYONE
+########################################################
+add_ace builtin.everyone miav2.info allow
+add_ace builtin.everyone miav2.ticket.update allow
+add_ace builtin.everyone miav2.ticket.create allow
+########################################################
+# MIAV2 REGULAR
+########################################################
+add_ace miav2.regular miav2.ticket.report allow
+########################################################
+# MIAV2 MODERATOR
+########################################################
+add_ace miav2.moderator miav2.wluser allow
+add_ace miav2.moderator miav2.ban allow
+add_ace miav2.moderator miav2.unban allow
+add_ace miav2.moderator miav2.kick allow
+add_ace miav2.moderator miav2.ticket.report allow
+add_ace miav2.moderator miav2.ticket.transfer allow
+add_ace miav2.moderator miav2.ticket.close allow
+########################################################
+# MIAV2 ADMIN
+########################################################
+add_ace miav2.admin miav2.wluser allow
+add_ace miav2.admin miav2.ban allow
+add_ace miav2.admin miav2.unban allow
+add_ace miav2.admin miav2.kick allow
+add_ace miav2.admin miav2.ticket.report allow
+add_ace miav2.admin miav2.ticket.transfer allow
+add_ace miav2.admin miav2.ticket.close allow
+add_ace miav2.admin miav2.reload allow
+add_ace miav2.admin miav2.wlserver allow
+########################################################
+# MIAV2 DEV
+########################################################
+add_ace miav2.dev miav2 allow
+########################################################
+# MIAV2 MISC
+########################################################
+add_ace miav2.misc miav2.misccommands allow
+```
 5. add "start MIAV2" to your server.cfg  
 6. enjoy.  
+  
 # Changing settings.
-PREFERABLY, you should alter settings using and sql connection app such as phpmyadmin or hiediSQL  
-However, admins can alter settings using the ingame command "/miav2set SETTINGNAME VALUE"  
-
+PREFERABLY, you should alter settings using and sql connection app such as phpmyadmin or hiediSQL 
+  
 # Commands  
-"/wltoggle 0" - will set the whitelist to 0 ( public )  
-"/wltoggle 50" - will set the whitelist to 50 ( regulars or higher )  
-"/wltoggle 100" - will set the whitelist to 100 ( mods or higher )  
-"/wltoggle 250" - will set the whitelist to 250 ( owner/admins only )    
-"/banall #id" - will ban the target user id, unless it has higher rank than the player 
-
-# Removing Bans  
-1. head into your database and delete the "banned" info in the miav_accounts table.
-2. script does NOT need to be restarted. it updates on the fly.
+"/mv2"  
+This command functions as the catchall command. subcommands are the real bread and butter.  
+They are as following:  
+```
+-- mv2 info : Displays information about this mod.  
+-- mv2 kick USERID: Kicks the user specified { /mv2 kick USERID REASON }  
+    ( If reason is Blank, Defaultkick from SQL settings table will be used )  
+-- mv2 ban USERID: Bans the specified user { /mv2 kick USERID REASON }  
+    ( If reason is Blank, Defaultkick from SQL settings table will be used )  
+-- mv2 report : Creates a report that admins and mods can respond to.  
+-- mv2 ticket : Create and update msgs to and from admin in the ingame ticketing system.  
+-- mv2 wluser 0-500: Alters the user's whitelist access level in the database by the specified amount.  
+    ( they user will require a restar of thier client for hardcoded permission to reapply. )  
+-- mv2 wlserver 0-500: Alters the global whitelist level in the database by the specified amount. 
+-- mv2 reload : Reloads the config from the Database and sets it as default.  
+    ( useful for updating settings manually )  
+-- mv2 users : SERVER ONLY. displays a list of connected users and thier identifiers  
+```
 - Thanks@!!  
 
 Madkiwi & SinaCutie
