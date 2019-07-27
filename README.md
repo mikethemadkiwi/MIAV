@@ -5,7 +5,7 @@ FiveM Server Side Steam-Enforced Multi-tier Ping, White list and Ban script.
 1. Breathe in.... Breathe out...  
 2. put MIAV2 folder in resources  
 3. import the miav2.sql file to your database.   
-NOTE!!! CHNAGE THE DEFAULT DATABASE NAME AT THE TOP OF THE FILE  
+NOTE!!! CHANGE THE DEFAULT DATABASE NAME AT THE TOP OF THE FILE  
 4. add the following to the bottom of your server.cfg  
 ```
 ########################################################
@@ -70,6 +70,7 @@ They are as following:
     ( If reason is Blank, Defaultkick from SQL settings table will be used )  
 -- mv2 ban USERID: Bans the specified user { /mv2 kick USERID REASON }  
     ( If reason is Blank, Defaultkick from SQL settings table will be used )  
+-- mv2 unban : Loads the ban interface, allowing a user to be searched and unbanned.  
 -- mv2 report : Creates a report that admins and mods can respond to.  
 -- mv2 ticket : Create and update msgs to and from admin in the ingame ticketing system.  
 -- mv2 wluser 0-500: Alters the user's whitelist access level in the database by the specified amount.  
